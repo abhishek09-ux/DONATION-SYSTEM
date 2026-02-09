@@ -38,9 +38,18 @@ const userSchema = new mongoose.Schema({
     type: Boolean,
     default: false
   },
+  emailVerified: {
+    type: Boolean,
+    default: false
+  },
   isActive: {
     type: Boolean,
     default: true
+  },
+  pan: {
+    type: String,
+    trim: true,
+    uppercase: true
   },
   googleId: {
     type: String,
@@ -48,6 +57,43 @@ const userSchema = new mongoose.Schema({
   },
   lastLogin: {
     type: Date
+  },
+  // 2FA fields
+  twoFactorEnabled: {
+    type: Boolean,
+    default: false
+  },
+  twoFactorSecret: {
+    type: String,
+    select: false
+  },
+  twoFactorMethod: {
+    type: String,
+    enum: ['email', 'authenticator'],
+    default: 'email'
+  },
+  // Referral system
+  referralCode: {
+    type: String,
+    unique: true,
+    sparse: true
+  },
+  referredBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
+  },
+  referralCount: {
+    type: Number,
+    default: 0
+  },
+  referralPoints: {
+    type: Number,
+    default: 0
+  },
+  // Language preference
+  language: {
+    type: String,
+    default: 'en'
   },
   resetPasswordToken: String,
   resetPasswordExpires: Date

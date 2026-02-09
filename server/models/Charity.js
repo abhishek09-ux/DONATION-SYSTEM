@@ -186,6 +186,37 @@ const charitySchema = new mongoose.Schema({
   priorityScore: {
     type: Number,
     default: 50
+  },
+  // Verification Badges
+  verificationBadge: {
+    type: String,
+    enum: ['none', 'verified', 'gold', 'platinum'],
+    default: 'none'
+  },
+  badges: [{
+    type: {
+      type: String,
+      enum: ['verified', 'top-rated', 'transparent', 'impact-leader', 'community-choice', 'fast-responder']
+    },
+    awardedAt: { type: Date, default: Date.now },
+    expiresAt: Date
+  }],
+  // Transparency Score (0-100)
+  transparencyScore: {
+    overall: { type: Number, default: 0 },
+    financial: { type: Number, default: 0 },      // Financial disclosure
+    governance: { type: Number, default: 0 },     // Board & Management
+    impact: { type: Number, default: 0 },         // Impact reporting
+    communication: { type: Number, default: 0 },  // Donor communication
+    lastCalculated: Date
+  },
+  // Financial Health Metrics
+  financialHealth: {
+    adminExpenseRatio: Number,     // Admin expenses / Total expenses
+    programExpenseRatio: Number,   // Program expenses / Total expenses
+    fundraisingEfficiency: Number, // Funds raised per rupee spent on fundraising
+    reserveRatio: Number,          // Reserves / Annual expenses
+    lastUpdated: Date
   }
 }, {
   timestamps: true

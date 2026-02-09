@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
-import { FiMail, FiLock, FiUser, FiPhone, FiEye, FiEyeOff, FiHeart, FiCheck } from 'react-icons/fi';
+import { FiMail, FiLock, FiUser, FiPhone, FiEye, FiEyeOff, FiCheck } from 'react-icons/fi';
+import Logo from '../components/Logo';
 import { useAuth } from '../context/AuthContext';
 import toast from 'react-hot-toast';
 
@@ -80,9 +81,9 @@ const Register = () => {
       <div className="max-w-md w-full">
         {/* Logo */}
         <div className="text-center mb-8">
-          <Link to="/" className="inline-flex items-center space-x-2">
-            <FiHeart className="h-10 w-10 text-primary-600 dark:text-primary-400" />
-            <span className="text-2xl font-bold text-gray-900 dark:text-white">DonateMatch</span>
+          <Link to="/" className="inline-flex items-center space-x-2 group">
+            <Logo className="h-12 w-12 transition-transform group-hover:scale-110" />
+            <span className="text-2xl font-bold bg-gradient-to-r from-purple-600 via-pink-500 to-rose-500 bg-clip-text text-transparent">DonateMatch</span>
           </Link>
           <h2 className="mt-6 text-3xl font-bold text-gray-900 dark:text-white">Create account</h2>
           <p className="mt-2 text-gray-600 dark:text-gray-400">Join our community of generous donors</p>

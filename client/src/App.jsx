@@ -4,6 +4,8 @@ import { AuthProvider } from './context/AuthContext';
 import { ThemeProvider } from './contexts/ThemeContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import PageTransition from './components/PageTransition';
+import Chatbot from './components/Chatbot';
+import AccessibilityPanel from './components/AccessibilityPanel';
 
 // Layout
 import Navbar from './components/Navbar';
@@ -16,12 +18,15 @@ import Register from './pages/Register';
 import Charities from './pages/Charities';
 import CharityDetails from './pages/CharityDetails';
 import About from './pages/About';
+import CampaignsPage from './pages/CampaignsPage';
+import GiftCardsPage from './pages/GiftCardsPage';
 
 // Donor Pages
 import DonorDashboard from './pages/donor/Dashboard';
 import DonorProfile from './pages/donor/Profile';
 import MyDonations from './pages/donor/MyDonations';
 import Recommendations from './pages/donor/Recommendations';
+import TaxReportsPage from './pages/TaxReportsPage';
 
 // Charity Pages
 import CharityDashboard from './pages/charity/Dashboard';
@@ -51,6 +56,8 @@ function App() {
               <Route path="/charities" element={<Charities />} />
               <Route path="/charities/:id" element={<CharityDetails />} />
               <Route path="/about" element={<About />} />
+              <Route path="/campaigns" element={<CampaignsPage />} />
+              <Route path="/gift-cards" element={<GiftCardsPage />} />
 
               {/* Donor Routes */}
               <Route path="/donor" element={
@@ -71,6 +78,11 @@ function App() {
               <Route path="/donor/recommendations" element={
                 <ProtectedRoute role="donor">
                   <Recommendations />
+                </ProtectedRoute>
+              } />
+              <Route path="/donor/tax-reports" element={
+                <ProtectedRoute role="donor">
+                  <TaxReportsPage />
                 </ProtectedRoute>
               } />
 
@@ -116,6 +128,8 @@ function App() {
               </PageTransition>
             </main>
           <Footer />
+          <Chatbot />
+          <AccessibilityPanel />
         </div>
         <Toaster 
           position="top-right"

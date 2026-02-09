@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { FiMenu, FiX, FiHeart, FiUser, FiLogOut, FiHome, FiSettings } from 'react-icons/fi';
+import { FiMenu, FiX, FiUser, FiLogOut, FiHome, FiSettings } from 'react-icons/fi';
 import ThemeToggle from './ThemeToggle';
+import Logo from './Logo';
 
 const Navbar = () => {
   const { user, isAuthenticated, logout } = useAuth();
@@ -29,9 +30,9 @@ const Navbar = () => {
       <div className="container-custom">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
-          <Link to="/" className="flex items-center space-x-2">
-            <FiHeart className="h-8 w-8 text-primary-600 dark:text-primary-400" />
-            <span className="text-xl font-bold text-gray-900 dark:text-white">DonateMatch</span>
+          <Link to="/" className="flex items-center space-x-2 group">
+            <Logo className="h-10 w-10 transition-transform group-hover:scale-110" />
+            <span className="text-xl font-bold bg-gradient-to-r from-purple-600 via-pink-500 to-rose-500 bg-clip-text text-transparent">DonateMatch</span>
           </Link>
 
           {/* Desktop Navigation */}
@@ -41,6 +42,12 @@ const Navbar = () => {
             </Link>
             <Link to="/charities" className="text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">
               Charities
+            </Link>
+            <Link to="/campaigns" className="text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">
+              Campaigns
+            </Link>
+            <Link to="/gift-cards" className="text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">
+              Gift Cards
             </Link>
             <Link to="/about" className="text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">
               About
@@ -137,6 +144,20 @@ const Navbar = () => {
                 onClick={() => setIsMenuOpen(false)}
               >
                 Charities
+              </Link>
+              <Link
+                to="/campaigns"
+                className="text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Campaigns
+              </Link>
+              <Link
+                to="/gift-cards"
+                className="text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Gift Cards
               </Link>
               <Link
                 to="/about"

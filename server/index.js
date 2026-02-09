@@ -18,6 +18,18 @@ const donationRoutes = require('./routes/donations');
 const matchingRoutes = require('./routes/matching');
 const adminRoutes = require('./routes/admin');
 const paymentRoutes = require('./routes/payments');
+const twoFactorRoutes = require('./routes/2fa');
+const campaignRoutes = require('./routes/campaigns');
+const giftCardRoutes = require('./routes/giftcards');
+const forumRoutes = require('./routes/forum');
+const volunteerRoutes = require('./routes/volunteers');
+const corporateRoutes = require('./routes/corporate');
+const impactStoryRoutes = require('./routes/impactStories');
+const taxReportRoutes = require('./routes/taxReports');
+const referralRoutes = require('./routes/referrals');
+const recommendationRoutes = require('./routes/recommendations');
+const chatbotRoutes = require('./routes/chatbot');
+const fraudDetectionRoutes = require('./routes/fraudDetection');
 
 const app = express();
 
@@ -51,6 +63,18 @@ app.use('/api/donations', donationRoutes);
 app.use('/api/matching', matchingRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/payments', paymentRoutes);
+app.use('/api/2fa', twoFactorRoutes);
+app.use('/api/campaigns', campaignRoutes);
+app.use('/api/giftcards', giftCardRoutes);
+app.use('/api/forum', forumRoutes);
+app.use('/api/volunteers', volunteerRoutes);
+app.use('/api/corporate', corporateRoutes);
+app.use('/api/impact-stories', impactStoryRoutes);
+app.use('/api/tax-reports', taxReportRoutes);
+app.use('/api/referrals', referralRoutes);
+app.use('/api/recommendations', recommendationRoutes);
+app.use('/api/chatbot', chatbotRoutes);
+app.use('/api/fraud', fraudDetectionRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {

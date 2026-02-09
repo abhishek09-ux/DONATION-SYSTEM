@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
-import { FiHeart, FiMail, FiPhone, FiMapPin, FiFacebook, FiTwitter, FiInstagram, FiLinkedin } from 'react-icons/fi';
+import { FiMail, FiPhone, FiMapPin, FiFacebook, FiTwitter, FiInstagram, FiLinkedin } from 'react-icons/fi';
+import Logo from './Logo';
 
 const Footer = () => {
   return (
@@ -9,8 +10,8 @@ const Footer = () => {
           {/* Brand */}
           <div className="space-y-4">
             <div className="flex items-center space-x-2">
-              <FiHeart className="h-8 w-8 text-primary-400" />
-              <span className="text-xl font-bold">DonateMatch</span>
+              <Logo className="h-10 w-10" />
+              <span className="text-xl font-bold bg-gradient-to-r from-purple-400 via-pink-400 to-rose-400 bg-clip-text text-transparent">DonateMatch</span>
             </div>
             <p className="text-gray-400 text-sm">
               AI-powered platform connecting donors with verified Indian charities for maximum impact.
