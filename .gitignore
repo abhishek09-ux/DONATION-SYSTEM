@@ -40,3 +40,6 @@ coverage/
 # Misc
 *.pem
 .cache/
+
+# Added by GitGuard (Node.js, Vite, React)
+out/
