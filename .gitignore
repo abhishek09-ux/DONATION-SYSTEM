@@ -43,3 +43,7 @@ coverage/
 
 # Added by GitGuard (Node.js, Vite, React)
 out/
+
+# Added by GitGuard (Node.js, Vite, React)
+# Environment-specific local files may contain sensitive overrides
+.env.*.local

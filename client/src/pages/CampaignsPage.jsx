@@ -1,10 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
-import api from '../services/api';
+import axios from 'axios';
 
 const CampaignsPage = () => {
-  const { t } = useTranslation();
   const [campaigns, setCampaigns] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('all');
@@ -18,10 +16,17 @@ const CampaignsPage = () => {
     try {
       setLoading(true);
       const params = filter !== 'all' ? { status: filter } : {};
-      const response = await api.get('/campaigns', { params });
-      setCampaigns(response.data.campaigns || response.data);
+      console.log('Fetching campaigns with params:', params);
+      // Use direct axios call to bypass any potential issues
+      const response = await axios.get('/api/campaigns', { params });
+      console.log('Campaigns API response:', response.data);
+      // API returns { success: true, data: { campaigns: [...], pagination: {...} } }
+      const campaignsData = response.data?.data?.campaigns || response.data?.campaigns || response.data || [];
+      console.log('Parsed campaigns:', campaignsData);
+      setCampaigns(Array.isArray(campaignsData) ? campaignsData : []);
     } catch (error) {
       console.error('Error fetching campaigns:', error);
+      setCampaigns([]);
     } finally {
       setLoading(false);
     }
@@ -45,6 +50,14 @@ const CampaignsPage = () => {
     if (days === 0) return 'Last day!';
     if (days === 1) return '1 day left';
     return `${days} days left`;
+  };
+
+  const formatCategory = (category) => {
+    if (!category) return 'General';
+    return category
+      .split('-')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
   };
 
   return (
@@ -122,10 +135,10 @@ const CampaignsPage = () => {
                   {/* Image */}
                   <div className="relative h-48 overflow-hidden">
                     <img
-                      src={campaign.images?.[0] || '/placeholder-campaign.jpg'}
+                      src={campaign.coverImage || campaign.images?.[0]?.url || 'https://images.unsplash.com/photo-1532629345422-7515f3d16bb6?w=800'}
                       alt={campaign.title}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                      onError={(e) => { e.target.src = 'https://via.placeholder.com/400x200?text=Campaign'; }}
+                      onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1532629345422-7515f3d16bb6?w=800'; }}
                     />
                     {campaign.matchingEnabled && (
                       <div className="absolute top-4 left-4 px-3 py-1 bg-green-500 text-white text-xs font-bold rounded-full">
@@ -144,7 +157,7 @@ const CampaignsPage = () => {
                     {/* Category & Time */}
                     <div className="flex justify-between items-center mb-2">
                       <span className="text-xs font-medium text-primary-600 dark:text-primary-400 bg-primary-50 dark:bg-primary-900/30 px-2 py-1 rounded">
-                        {campaign.category || 'General'}
+                        {formatCategory(campaign.category)}
                       </span>
                       <span className={`text-xs font-medium ${
                         getDaysRemaining(campaign.endDate) === 'Ended' 
@@ -168,7 +181,7 @@ const CampaignsPage = () => {
                     {/* Charity */}
                     {campaign.charity && (
                       <p className="text-xs text-gray-400 dark:text-gray-500 mb-4">
-                        by {campaign.charity.name || 'Unknown Charity'}
+                        by {campaign.charity.organizationName || campaign.charity.name || 'Unknown Charity'}
                       </p>
                     )}
 
