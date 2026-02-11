@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { FiMenu, FiX, FiUser, FiLogOut, FiHome, FiSettings } from 'react-icons/fi';
 import ThemeToggle from './ThemeToggle';
+import LanguageSwitcher from './LanguageSwitcher';
 import Logo from './Logo';
 
 const Navbar = () => {
@@ -53,8 +54,11 @@ const Navbar = () => {
               About
             </Link>
 
-            {/* Theme Toggle */}
-            <ThemeToggle />
+            {/* Theme Toggle & Language */}
+            <div className="flex items-center space-x-2">
+              <LanguageSwitcher variant="dropdown" />
+              <ThemeToggle />
+            </div>
 
             {isAuthenticated ? (
               <div className="relative">
@@ -117,6 +121,7 @@ const Navbar = () => {
 
           {/* Mobile Menu Button */}
           <div className="md:hidden flex items-center space-x-2">
+            <LanguageSwitcher variant="minimal" />
             <ThemeToggle />
             <button
               className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-700 text-gray-700 dark:text-gray-300"

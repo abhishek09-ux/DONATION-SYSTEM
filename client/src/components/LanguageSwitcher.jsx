@@ -4,7 +4,11 @@ import { FiGlobe, FiCheck } from 'react-icons/fi';
 
 const languages = [
   { code: 'en', name: 'English', native: 'English', flag: '🇬🇧' },
-  { code: 'hi', name: 'Hindi', native: 'हिन्दी', flag: '🇮🇳' }
+  { code: 'hi', name: 'Hindi', native: 'हिन्दी', flag: '🇮🇳' },
+  { code: 'ta', name: 'Tamil', native: 'தமிழ்', flag: '🇮🇳' },
+  { code: 'bn', name: 'Bengali', native: 'বাংলা', flag: '🇮🇳' },
+  { code: 'te', name: 'Telugu', native: 'తెలుగు', flag: '🇮🇳' },
+  { code: 'mr', name: 'Marathi', native: 'मराठी', flag: '🇮🇳' }
 ];
 
 const LanguageSwitcher = ({ variant = 'dropdown' }) => {
@@ -17,6 +21,40 @@ const LanguageSwitcher = ({ variant = 'dropdown' }) => {
     i18n.changeLanguage(code);
     setIsOpen(false);
   };
+
+  // Minimal variant - just flag icon
+  if (variant === 'minimal') {
+    return (
+      <div className="relative">
+        <button
+          onClick={() => setIsOpen(!isOpen)}
+          className="p-2 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors"
+          aria-label="Select language"
+        >
+          <span className="text-lg">{currentLanguage.flag}</span>
+        </button>
+
+        {isOpen && (
+          <>
+            <div className="fixed inset-0 z-40" onClick={() => setIsOpen(false)} />
+            <div className="absolute right-0 top-full mt-2 w-40 bg-white dark:bg-slate-800 rounded-xl shadow-xl border dark:border-slate-700 py-2 z-50">
+              {languages.map((lang) => (
+                <button
+                  key={lang.code}
+                  onClick={() => changeLanguage(lang.code)}
+                  className="w-full flex items-center gap-2 px-3 py-2 text-left hover:bg-gray-50 dark:hover:bg-slate-700"
+                >
+                  <span>{lang.flag}</span>
+                  <span className="text-sm text-gray-900 dark:text-white">{lang.native}</span>
+                  {i18n.language === lang.code && <FiCheck className="ml-auto text-primary-600" size={16} />}
+                </button>
+              ))}
+            </div>
+          </>
+        )}
+      </div>
+    );
+  }
 
   if (variant === 'buttons') {
     return (
