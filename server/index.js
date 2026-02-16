@@ -28,7 +28,7 @@ const impactStoryRoutes = require('./routes/impactStories');
 const taxReportRoutes = require('./routes/taxReports');
 const referralRoutes = require('./routes/referrals');
 const recommendationRoutes = require('./routes/recommendations');
-const chatbotRoutes = require('./routes/chatbot');
+const chatbotRoutes = require('./routes/chatbotAI'); // Smart AI Chatbot
 const fraudDetectionRoutes = require('./routes/fraudDetection');
 
 const app = express();

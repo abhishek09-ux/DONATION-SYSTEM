@@ -203,6 +203,40 @@ npm run client    # Frontend on port 5173
 | `RAZORPAY_KEY_SECRET` | Razorpay Secret | Yes |
 | `CLIENT_URL` | Frontend URL for CORS | Yes |
 
+## 🚀 Deployment (FREE)
+
+Deploy your app to production for **$0/month** using free tiers:
+
+| Service | Provider | Free Tier |
+|---------|----------|-----------|
+| Frontend | Vercel | 100GB bandwidth |
+| Backend | Railway | 500 hours/month |
+| Database | MongoDB Atlas | 512MB storage |
+
+**Quick Start:**
+1. See [FREE_DEPLOYMENT.md](FREE_DEPLOYMENT.md) for step-by-step guide
+2. See [DEPLOYMENT.md](DEPLOYMENT.md) for advanced options
+
+**Files Created:**
+- `client/vercel.json` - Vercel configuration
+- `server/railway.json` - Railway configuration
+- `server/Procfile` - Heroku/Railway process file
+- `client/.env.example` & `server/.env.example` - Environment templates
+
+## 🌐 Supported Languages
+
+DonateMatch supports **13 Indian languages**:
+
+| Language | Code | Language | Code |
+|----------|------|----------|------|
+| English | en | Kannada | kn |
+| Hindi | hi | Malayalam | ml |
+| Bengali | bn | Punjabi | pa |
+| Telugu | te | Odia | or |
+| Marathi | mr | Assamese | as |
+| Tamil | ta | Urdu | ur |
+| Gujarati | gu | | |
+
 ## Contributing
 
 1. Fork the repository

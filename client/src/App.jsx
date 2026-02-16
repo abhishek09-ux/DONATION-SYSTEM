@@ -4,7 +4,7 @@ import { AuthProvider } from './context/AuthContext';
 import { ThemeProvider } from './contexts/ThemeContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import PageTransition from './components/PageTransition';
-import Chatbot from './components/Chatbot';
+import Chatbot from './components/ChatbotAI'; // Smart AI Chatbot
 import AccessibilityPanel from './components/AccessibilityPanel';
 
 // Layout

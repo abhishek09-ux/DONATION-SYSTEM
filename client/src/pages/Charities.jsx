@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { FiSearch, FiFilter, FiMapPin, FiX, FiColumns } from 'react-icons/fi';
 import { charityAPI, matchingAPI } from '../services/api';
 import CharityCard from '../components/CharityCard';
@@ -7,6 +8,7 @@ import { GridSkeleton } from '../components/Skeleton';
 import CharityComparison from '../components/CharityComparison';
 
 const Charities = () => {
+  const { t } = useTranslation();
   const [searchParams, setSearchParams] = useSearchParams();
   const [charities, setCharities] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -113,8 +115,8 @@ const Charities = () => {
       {/* Header */}
       <div className="bg-white dark:bg-slate-800 border-b dark:border-slate-700">
         <div className="container-custom py-8">
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">Browse Charities</h1>
-          <p className="text-gray-600 dark:text-gray-400">Find verified organizations making a difference</p>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">{t('charities.title')}</h1>
+          <p className="text-gray-600 dark:text-gray-400">{t('charities.subtitle')}</p>
         </div>
       </div>
 
@@ -123,11 +125,11 @@ const Charities = () => {
           {/* Filters Sidebar - Desktop */}
           <div className="hidden lg:block w-64 flex-shrink-0">
             <div className="card sticky top-24">
-              <h3 className="font-semibold text-gray-900 dark:text-white mb-4">Filters</h3>
+              <h3 className="font-semibold text-gray-900 dark:text-white mb-4">{t('common.filter', 'Filters')}</h3>
 
               {/* Search */}
               <div className="mb-6">
-                <label className="label">Search</label>
+                <label className="label">{t('common.search')}</label>
                 <div className="relative">
                   <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
                   <input
@@ -142,7 +144,7 @@ const Charities = () => {
 
               {/* Causes */}
               <div className="mb-6">
-                <label className="label">Causes</label>
+                <label className="label">{t('causes', 'Causes')}</label>
                 <div className="space-y-2 max-h-48 overflow-y-auto">
                   {filters?.causes?.map((cause) => (
                     <label key={cause.id} className="flex items-center space-x-2 cursor-pointer">
@@ -165,13 +167,13 @@ const Charities = () => {
 
               {/* Location */}
               <div className="mb-6">
-                <label className="label">State</label>
+                <label className="label">{t('state', 'State')}</label>
                 <select
                   value={selectedState}
                   onChange={(e) => setSelectedState(e.target.value)}
                   className="input-field"
                 >
-                  <option value="">All States</option>
+                  <option value="">{t('allStates', 'All States')}</option>
                   {filters?.states?.map((state) => (
                     <option key={state} value={state}>{state}</option>
                   ))}
@@ -179,13 +181,13 @@ const Charities = () => {
               </div>
 
               <div className="mb-6">
-                <label className="label">City</label>
+                <label className="label">{t('city', 'City')}</label>
                 <select
                   value={selectedCity}
                   onChange={(e) => setSelectedCity(e.target.value)}
                   className="input-field"
                 >
-                  <option value="">All Cities</option>
+                  <option value="">{t('allCities', 'All Cities')}</option>
                   {filters?.cities?.map((city) => (
                     <option key={city} value={city}>{city}</option>
                   ))}
@@ -195,11 +197,11 @@ const Charities = () => {
               {/* Actions */}
               <div className="space-y-3">
                 <button onClick={applyFilters} className="btn-primary w-full">
-                  Apply Filters
+                  {t('applyFilters', 'Apply Filters')}
                 </button>
                 {hasActiveFilters && (
                   <button onClick={clearFilters} className="btn-outline w-full">
-                    Clear All
+                    {t('clearAll', 'Clear All')}
                   </button>
                 )}
               </div>

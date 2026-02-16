@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../context/AuthContext';
 import { FiMenu, FiX, FiUser, FiLogOut, FiHome, FiSettings } from 'react-icons/fi';
 import ThemeToggle from './ThemeToggle';
@@ -7,6 +8,7 @@ import LanguageSwitcher from './LanguageSwitcher';
 import Logo from './Logo';
 
 const Navbar = () => {
+  const { t } = useTranslation();
   const { user, isAuthenticated, logout } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
@@ -39,19 +41,19 @@ const Navbar = () => {
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-8">
             <Link to="/" className="text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">
-              Home
+              {t('nav.home')}
             </Link>
             <Link to="/charities" className="text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">
-              Charities
+              {t('nav.charities')}
             </Link>
             <Link to="/campaigns" className="text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">
-              Campaigns
+              {t('nav.campaigns')}
             </Link>
             <Link to="/gift-cards" className="text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">
-              Gift Cards
+              {t('giftCards', 'Gift Cards')}
             </Link>
             <Link to="/about" className="text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">
-              About
+              {t('nav.about')}
             </Link>
 
             {/* Theme Toggle & Language */}
