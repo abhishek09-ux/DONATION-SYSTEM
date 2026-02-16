@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import axios from 'axios';
+import api from '../services/api';
 
 const CampaignsPage = () => {
   const [campaigns, setCampaigns] = useState([]);
@@ -17,8 +17,8 @@ const CampaignsPage = () => {
       setLoading(true);
       const params = filter !== 'all' ? { status: filter } : {};
       console.log('Fetching campaigns with params:', params);
-      // Use direct axios call to bypass any potential issues
-      const response = await axios.get('/api/campaigns', { params });
+      // Use api service with VITE_API_URL
+      const response = await api.get('/campaigns', { params });
       console.log('Campaigns API response:', response.data);
       // API returns { success: true, data: { campaigns: [...], pagination: {...} } }
       const campaignsData = response.data?.data?.campaigns || response.data?.campaigns || response.data || [];
