@@ -1,8 +1,21 @@
 import axios from 'axios';
 
-// Use environment variable for production, fallback to /api for development (vite proxy)
+// Determine the API URL based on environment
+const getApiUrl = () => {
+  // Check for environment variable first
+  if (import.meta.env.VITE_API_URL) {
+    return import.meta.env.VITE_API_URL;
+  }
+  // In production (Vercel), use the Railway backend
+  if (typeof window !== 'undefined' && window.location.hostname.includes('vercel.app')) {
+    return 'https://donation-system.up.railway.app/api';
+  }
+  // Development fallback (uses vite proxy)
+  return '/api';
+};
+
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || '/api',
+  baseURL: getApiUrl(),
   headers: {
     'Content-Type': 'application/json'
   }
