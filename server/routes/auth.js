@@ -1,11 +1,16 @@
 const express = require('express');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
+const axios = require('axios');
+const { OAuth2Client } = require('google-auth-library');
 const { body, validationResult } = require('express-validator');
 const User = require('../models/User');
 const DonorProfile = require('../models/DonorProfile');
 const Charity = require('../models/Charity');
 const { auth } = require('../middleware/auth');
+
+// Initialize Google OAuth client
+const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 // Generate JWT Token
 const generateToken = (userId) => {
@@ -228,6 +233,314 @@ router.post('/logout', auth, (req, res) => {
   res.json({
     success: true,
     message: 'Logged out successfully'
+  });
+});
+
+// ============================================
+// OAUTH ROUTES
+// ============================================
+
+// @route   POST /api/auth/google
+// @desc    Login/Register with Google
+// @access  Public
+router.post('/google', async (req, res) => {
+  try {
+    const { credential, clientId } = req.body;
+    
+    if (!credential) {
+      return res.status(400).json({
+        success: false,
+        message: 'Google credential is required'
+      });
+    }
+
+    // Verify the Google token
+    let payload;
+    try {
+      const ticket = await googleClient.verifyIdToken({
+        idToken: credential,
+        audience: clientId || process.env.GOOGLE_CLIENT_ID
+      });
+      payload = ticket.getPayload();
+    } catch (verifyError) {
+      console.error('Google token verification failed:', verifyError);
+      return res.status(401).json({
+        success: false,
+        message: 'Invalid Google token'
+      });
+    }
+
+    const { sub: googleId, email, name, picture, email_verified } = payload;
+
+    // Check if user exists with this Google ID
+    let user = await User.findOne({ googleId });
+    
+    if (!user) {
+      // Check if user exists with this email
+      user = await User.findOne({ email });
+      
+      if (user) {
+        // Link Google account to existing user
+        user.googleId = googleId;
+        user.authProvider = user.authProvider === 'local' ? 'local' : 'google';
+        if (picture && !user.avatar) user.avatar = picture;
+        if (email_verified) user.emailVerified = true;
+        await user.save();
+      } else {
+        // Create new user
+        user = new User({
+          email,
+          name,
+          googleId,
+          avatar: picture || '',
+          role: 'donor',
+          isVerified: true,
+          emailVerified: email_verified || false,
+          authProvider: 'google'
+        });
+        await user.save();
+        
+        // Create donor profile
+        await DonorProfile.create({ user: user._id });
+      }
+    }
+
+    // Update last login
+    user.lastLogin = new Date();
+    await user.save();
+
+    const token = generateToken(user._id);
+
+    res.json({
+      success: true,
+      message: 'Google login successful',
+      data: {
+        user,
+        token
+      }
+    });
+  } catch (error) {
+    console.error('Google auth error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Server error during Google authentication'
+    });
+  }
+});
+
+// @route   POST /api/auth/github
+// @desc    Login/Register with GitHub
+// @access  Public
+router.post('/github', async (req, res) => {
+  try {
+    const { code } = req.body;
+    
+    if (!code) {
+      return res.status(400).json({
+        success: false,
+        message: 'GitHub authorization code is required'
+      });
+    }
+
+    // Exchange code for access token
+    const tokenResponse = await axios.post(
+      'https://github.com/login/oauth/access_token',
+      {
+        client_id: process.env.GITHUB_CLIENT_ID,
+        client_secret: process.env.GITHUB_CLIENT_SECRET,
+        code
+      },
+      {
+        headers: { Accept: 'application/json' }
+      }
+    );
+
+    const { access_token } = tokenResponse.data;
+    
+    if (!access_token) {
+      return res.status(401).json({
+        success: false,
+        message: 'Failed to get GitHub access token'
+      });
+    }
+
+    // Get user info from GitHub
+    const userResponse = await axios.get('https://api.github.com/user', {
+      headers: { Authorization: `Bearer ${access_token}` }
+    });
+
+    const githubUser = userResponse.data;
+    
+    // Get user emails (may be private)
+    let email = githubUser.email;
+    if (!email) {
+      const emailsResponse = await axios.get('https://api.github.com/user/emails', {
+        headers: { Authorization: `Bearer ${access_token}` }
+      });
+      const primaryEmail = emailsResponse.data.find(e => e.primary);
+      email = primaryEmail?.email || `${githubUser.id}@github.user`;
+    }
+
+    // Check if user exists with this GitHub ID
+    let user = await User.findOne({ githubId: githubUser.id.toString() });
+    
+    if (!user) {
+      // Check if user exists with this email
+      user = await User.findOne({ email });
+      
+      if (user) {
+        // Link GitHub account to existing user
+        user.githubId = githubUser.id.toString();
+        if (githubUser.avatar_url && !user.avatar) user.avatar = githubUser.avatar_url;
+        await user.save();
+      } else {
+        // Create new user
+        user = new User({
+          email,
+          name: githubUser.name || githubUser.login,
+          githubId: githubUser.id.toString(),
+          avatar: githubUser.avatar_url || '',
+          role: 'donor',
+          isVerified: true,
+          emailVerified: true,
+          authProvider: 'github'
+        });
+        await user.save();
+        
+        // Create donor profile
+        await DonorProfile.create({ user: user._id });
+      }
+    }
+
+    // Update last login
+    user.lastLogin = new Date();
+    await user.save();
+
+    const token = generateToken(user._id);
+
+    res.json({
+      success: true,
+      message: 'GitHub login successful',
+      data: {
+        user,
+        token
+      }
+    });
+  } catch (error) {
+    console.error('GitHub auth error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Server error during GitHub authentication'
+    });
+  }
+});
+
+// @route   POST /api/auth/facebook
+// @desc    Login/Register with Facebook
+// @access  Public
+router.post('/facebook', async (req, res) => {
+  try {
+    const { accessToken, userID } = req.body;
+    
+    if (!accessToken || !userID) {
+      return res.status(400).json({
+        success: false,
+        message: 'Facebook access token and user ID are required'
+      });
+    }
+
+    // Verify the token and get user info from Facebook
+    const fbResponse = await axios.get(
+      `https://graph.facebook.com/v18.0/${userID}?fields=id,name,email,picture.type(large)&access_token=${accessToken}`
+    );
+
+    const fbUser = fbResponse.data;
+    
+    if (!fbUser || fbUser.id !== userID) {
+      return res.status(401).json({
+        success: false,
+        message: 'Invalid Facebook token'
+      });
+    }
+
+    const email = fbUser.email || `${fbUser.id}@facebook.user`;
+
+    // Check if user exists with this Facebook ID
+    let user = await User.findOne({ facebookId: fbUser.id });
+    
+    if (!user) {
+      // Check if user exists with this email
+      user = await User.findOne({ email });
+      
+      if (user) {
+        // Link Facebook account to existing user
+        user.facebookId = fbUser.id;
+        if (fbUser.picture?.data?.url && !user.avatar) {
+          user.avatar = fbUser.picture.data.url;
+        }
+        await user.save();
+      } else {
+        // Create new user
+        user = new User({
+          email,
+          name: fbUser.name,
+          facebookId: fbUser.id,
+          avatar: fbUser.picture?.data?.url || '',
+          role: 'donor',
+          isVerified: true,
+          emailVerified: !!fbUser.email,
+          authProvider: 'facebook'
+        });
+        await user.save();
+        
+        // Create donor profile
+        await DonorProfile.create({ user: user._id });
+      }
+    }
+
+    // Update last login
+    user.lastLogin = new Date();
+    await user.save();
+
+    const token = generateToken(user._id);
+
+    res.json({
+      success: true,
+      message: 'Facebook login successful',
+      data: {
+        user,
+        token
+      }
+    });
+  } catch (error) {
+    console.error('Facebook auth error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Server error during Facebook authentication'
+    });
+  }
+});
+
+// @route   GET /api/auth/oauth/config
+// @desc    Get OAuth configuration for frontend
+// @access  Public
+router.get('/oauth/config', (req, res) => {
+  res.json({
+    success: true,
+    data: {
+      google: {
+        clientId: process.env.GOOGLE_CLIENT_ID || '',
+        enabled: !!process.env.GOOGLE_CLIENT_ID
+      },
+      github: {
+        clientId: process.env.GITHUB_CLIENT_ID || '',
+        enabled: !!process.env.GITHUB_CLIENT_ID
+      },
+      facebook: {
+        appId: process.env.FACEBOOK_APP_ID || '',
+        enabled: !!process.env.FACEBOOK_APP_ID
+      }
+    }
   });
 });
 

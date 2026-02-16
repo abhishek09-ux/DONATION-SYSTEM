@@ -15,6 +15,7 @@ import Footer from './components/Footer';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import GitHubCallback from './pages/GitHubCallback';
 import Charities from './pages/Charities';
 import CharityDetails from './pages/CharityDetails';
 import About from './pages/About';
@@ -53,6 +54,7 @@ function App() {
                   <Route path="/" element={<Home />} />
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
+              <Route path="/auth/github/callback" element={<GitHubCallback />} />
               <Route path="/charities" element={<Charities />} />
               <Route path="/charities/:id" element={<CharityDetails />} />
               <Route path="/about" element={<About />} />

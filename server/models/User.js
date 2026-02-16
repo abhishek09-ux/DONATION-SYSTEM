@@ -13,8 +13,11 @@ const userSchema = new mongoose.Schema({
   },
   password: {
     type: String,
-    required: [true, 'Password is required'],
-    minlength: [6, 'Password must be at least 6 characters']
+    minlength: [6, 'Password must be at least 6 characters'],
+    // Password not required for OAuth users
+    required: function() {
+      return !this.googleId && !this.githubId && !this.facebookId;
+    }
   },
   name: {
     type: String,
@@ -53,7 +56,23 @@ const userSchema = new mongoose.Schema({
   },
   googleId: {
     type: String,
-    sparse: true
+    sparse: true,
+    index: true
+  },
+  githubId: {
+    type: String,
+    sparse: true,
+    index: true
+  },
+  facebookId: {
+    type: String,
+    sparse: true,
+    index: true
+  },
+  authProvider: {
+    type: String,
+    enum: ['local', 'google', 'github', 'facebook'],
+    default: 'local'
   },
   lastLogin: {
     type: Date
@@ -103,7 +122,8 @@ const userSchema = new mongoose.Schema({
 
 // Hash password before saving
 userSchema.pre('save', async function(next) {
-  if (!this.isModified('password')) return next();
+  // Skip if no password (OAuth users) or password not modified
+  if (!this.password || !this.isModified('password')) return next();
   
   try {
     const salt = await bcrypt.genSalt(10);
@@ -116,6 +136,8 @@ userSchema.pre('save', async function(next) {
 
 // Compare password method
 userSchema.methods.comparePassword = async function(candidatePassword) {
+  // OAuth users don't have passwords
+  if (!this.password) return false;
   return bcrypt.compare(candidatePassword, this.password);
 };
 

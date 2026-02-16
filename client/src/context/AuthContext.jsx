@@ -72,6 +72,17 @@ export const AuthProvider = ({ children }) => {
     setProfile(newProfile);
   };
 
+  // Set token helper for OAuth
+  const setToken = (token) => {
+    if (token) {
+      localStorage.setItem('token', token);
+      setIsAuthenticated(true);
+    } else {
+      localStorage.removeItem('token');
+      setIsAuthenticated(false);
+    }
+  };
+
   const value = {
     user,
     profile,
@@ -81,7 +92,9 @@ export const AuthProvider = ({ children }) => {
     register,
     logout,
     updateProfile,
-    checkAuth
+    checkAuth,
+    setUser,
+    setToken
   };
 
   return (
